@@ -22,7 +22,7 @@ radius=8
 
     # Define the output file
 output_file="${output_dir}/r${radius}_Y${oxy_level}_BVF${BVF}_ori${orientation}_fov${fov}_res${resolution}.h5"
-spinwalk -C -r "$radius" -b "$BVF" -v "$fov" -z "$resolution" -d "$dChi" -y "$oxy_level" -o "$orientation" -s 0 -f "$output_file"
+spinwalk phantom -c -r "$radius" -v "$BVF" -f "$fov" -z "$resolution" -d "$dChi" -y "$oxy_level" -n "$orientation" -e 0 -o "$output_file"
 
 
 

@@ -25,7 +25,7 @@ do
     output_file="${output_dir}/r${radius}_Y${oxy_level}_BVF${BVF}_ori${ori}_fov${fov}_res${resolution}.h5"
     # Call the command with the variable parameter and redirect the output
     echo "Running command with angle= $ori degree"
-    spinwalk -C -r "$radius" -b "$BVF" -v "$fov" -z "$resolution" -d "$dChi" -y "$oxy_level" -o "$ori" -s "$ori" -f "$output_file"
+    spinwalk phantom -c -r "$radius" -v "$BVF" -f "$fov" -z "$resolution" -d "$dChi" -y "$oxy_level" -n "$ori" -e "$ori" -o "$output_file"
 done
 
 

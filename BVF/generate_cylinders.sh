@@ -25,7 +25,7 @@ do
     output_file="${output_dir}/r${radius}_Y${oxy_level}_BVF${b}_ori${orientation}_fov${fov}_res${resolution}.h5"
     # Call the command with the variable parameter and redirect the output
     echo "Running command with BVF= $b %"
-    spinwalk -C -r "$radius" -b "$b" -v "$fov" -z "$resolution" -d "$dChi" -y "$oxy_level" -o "$orientation" -s "$b" -f "$output_file"
+    spinwalk phantom -c -r "$radius" -v "$b" -f "$fov" -z "$resolution" -d "$dChi" -y "$oxy_level" -n "$orientation" -e "$b" -o "$output_file"
 done
 
 

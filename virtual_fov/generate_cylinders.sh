@@ -29,7 +29,7 @@ do
     output_file="${output_dir}/r${radius}_Y${oxy_level}_BVF${BVF}_ori${orientation}_fov${fov}_res${resolution}_rep${rep}.h5"
     # Call the command with the variable parameter and redirect the output
     echo "Running command with radius= $radius um"
-    spinwalk -C -r "$radius" -b "$BVF" -v "$fov" -z "$resolution" -d "$dChi" -y "$oxy_level" -o "$orientation" -s "$rep" -f "$output_file"
+    spinwalk phantom -c -r "$radius" -v "$BVF" -f "$fov" -z "$resolution" -d "$dChi" -y "$oxy_level" -n "$orientation" -e "$rep" -o "$output_file"
 done
 
 done
@@ -48,7 +48,7 @@ do
     output_file="${output_dir}/r${radius}_Y${oxy_level}_BVF${BVF}_ori${orientation}_fov${fov}_res${r}_rep${rep}.h5"
     # Call the command with the variable parameter and redirect the output
     echo "Running command with radius= $radius um"
-    spinwalk -C -r "$radius" -b "$BVF" -v "$fov" -z "$r" -d "$dChi" -y "$oxy_level" -o "$orientation" -s "$rep" -f "$output_file"
+    spinwalk phantom -c -r "$radius" -v "$BVF" -f "$fov" -z "$r" -d "$dChi" -y "$oxy_level" -n "$orientation" -e "$rep" -o "$output_file"
 done
 
 done
@@ -64,7 +64,7 @@ do
     output_file="${output_dir}/r${radius}_Y${oxy_level}_BVF${BVF}_ori${orientation}_fov${fov}_res${resolution}_rep${rep}.h5"
     # Call the command with the variable parameter and redirect the output
     echo "Running command with radius= $radius um"
-    spinwalk -C -r "$radius" -b "$BVF" -v "$fov" -z "$resolution" -d "$dChi" -y "$oxy_level" -o "$orientation" -s "$rep" -f "$output_file"
+    spinwalk phantom -c -r "$radius" -v "$BVF" -f "$fov" -z "$resolution" -d "$dChi" -y "$oxy_level" -n "$orientation" -e "$rep" -o "$output_file"
 done
 
 
@@ -78,7 +78,7 @@ do
     output_file="${output_dir}/r${radius}_Y${oxy_level}_BVF${BVF}_ori${orientation}_fov${fov}_res${resolution}_rep${rep}.h5"
     # Call the command with the variable parameter and redirect the output
     echo "Running command with radius= $radius um"
-    spinwalk -C -r "$radius" -b "$BVF" -v "$fov" -z "$resolution" -d "$dChi" -y "$oxy_level" -o "$orientation" -s "$rep" -f "$output_file"
+    spinwalk phantom -c -r "$radius" -v "$BVF" -f "$fov" -z "$resolution" -d "$dChi" -y "$oxy_level" -n "$orientation" -e "$rep" -o "$output_file"
 done
 
 
