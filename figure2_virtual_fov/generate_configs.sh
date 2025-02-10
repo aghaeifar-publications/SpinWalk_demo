@@ -27,7 +27,7 @@ for radius in "${radii[@]}"; do
     num_files=${#files[@]}
     echo "Phantoms: $num_files " 
 
-    fov_scale=$(echo "scale=5; $radius / $target_radius" | bc)
+    fov_scale=$(echo "scale=5; $target_radius / $radius " | bc)
     # instead of creating two separate phantoms with different oxygen levels, we will create one phantom with 0 oxygen level and then modify the B0 in the config file
     for i in "${!oxy_levels[@]}"; do
         config_filename="${output_dir}/gre_${oxy_levels[$i]}_${radius}um.ini"

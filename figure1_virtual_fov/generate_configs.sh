@@ -26,7 +26,7 @@ target_radius=8
 for radius in "${radii[@]}"; do
 
 phantoms=""
-fov_scale=$(echo "scale=5; $radius / $target_radius" | bc)
+fov_scale=$(echo "scale=5; $target_radius / $radius" | bc)
 # concatenate all phantoms filename
 for rep in "${repetition[@]}"; do
     phantom_filename="${phantom_dir}/r${radius}_Y${oxy_level}_BVF${BVF}_ori${orientation}_fov${fov}_res${resolution}_rep${rep}.h5"
