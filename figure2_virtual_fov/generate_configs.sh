@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -e
 # Get the directory where the script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -25,9 +25,10 @@ for radius in "${radii[@]}"; do
         phantoms+=".$file "
     done
     num_files=${#files[@]}
-    echo "Phantoms: $num_files " 
+    echo -e "Phantoms: $num_files " 
 
-    fov_scale=$(echo "scale=5; $target_radius / $radius " | bc)
+    fov_scale=$(echo "scale=5; $target_radius / ${radius} " | bc)
+    echo -e "FOV scale: $fov_scale"
     # instead of creating two separate phantoms with different oxygen levels, we will create one phantom with 0 oxygen level and then modify the B0 in the config file
     for i in "${!oxy_levels[@]}"; do
         config_filename="${output_dir}/gre_${oxy_levels[$i]}_${radius}um.ini"
@@ -39,7 +40,7 @@ for radius in "${radii[@]}"; do
 
         append="\n\n[TISSUE_PARAMETERS]\nT1[0] = 2200\nT1[1] = 2500\nT2[0] = 41\nT2[1] = ${T2[$i]}"
         append="$append\n\n[SIMULATION_PARAMETERS]\nB0 = ${B0_oxy[$i]}"
-        append="$append\nFOV_SCALE[0] = ${fov_scale}\n"
+        append="$append\nSCALE[0] = ${fov_scale}\n"
         echo -e "$append" >> "$config_filename"
 
     done

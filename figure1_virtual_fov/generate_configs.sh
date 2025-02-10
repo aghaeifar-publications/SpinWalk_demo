@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -e
 # Get the directory where the script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -7,46 +7,41 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 pushd "$SCRIPT_DIR" > /dev/null
 
 # Define the directories
-phantom_dir="../phantoms"
+phantom_dir="./phantoms"
 output_dir="./configs"
 mkdir -p "$output_dir"
 
-BVF=4
-oxy_level=0.0
-dChi=0.00000011
-orientation=90
-resolution=1000
-fov=1000
 radii=(1 2 5 8 12 20 35 50 75)
-repetition=(1 2 3 4 5 6 7 8 9 10)
 oxy_levels=(78 85)
 B0_oxy=(2.068 1.41) # 9.4 T * (1 - 0.78) and 9.4 T * (1 - 0.85)
+T2=(13 20)
 target_radius=8
 # Loop through the array of parameters
 for radius in "${radii[@]}"; do
+    files=($(find "$phantom_dir" -type f -name "*r${radius}*"))
+    phantoms=""
+    for file in "${files[@]}"; do
+        phantoms+=".$file "
+    done
+    num_files=${#files[@]}
+    echo -e "Phantoms: $num_files " 
 
-phantoms=""
-fov_scale=$(echo "scale=5; $target_radius / $radius" | bc)
-# concatenate all phantoms filename
-for rep in "${repetition[@]}"; do
-    phantom_filename="${phantom_dir}/r${radius}_Y${oxy_level}_BVF${BVF}_ori${orientation}_fov${fov}_res${resolution}_rep${rep}.h5"
-    phantoms="$phantoms $phantom_filename"
-done
+    fov_scale=$(echo "scale=5; $target_radius / $radius" | bc)
+    # instead of creating two separate phantoms with different oxygen levels, we will create one phantom with 0 oxygen level and then modify the B0 in the config file
+    for i in "${!oxy_levels[@]}"; do
+        config_filename="${output_dir}/gre_${oxy_levels[$i]}_${radius}um.ini"
+        seqname="gre_${oxy_levels[$i]}"
+        spinwalk -l log_configs.txt config --phantoms $phantoms -o $config_filename --TE 20000 -s GRE -t 50
 
-# instead of creating two separate phantoms with different oxygen levels, we will create one phantom with 0 oxygen level and then modify the B0 in the config file
-for i in "${!oxy_levels[@]}"; do
-    config_filename="${output_dir}/gre_${oxy_levels[$i]}_${radius}um.ini"
-    seqname="gre_${oxy_levels[$i]}"
-    spinwalk -l log_configs.txt config --phantoms $phantoms -o $config_filename --TE 20000 -s GRE -t 50
+        # modify config file
+        sed -i "s/SEQ_NAME = gre/SEQ_NAME = ${seqname}/g" "$config_filename"
 
-    # modify config file
-    sed -i "s/SEQ_NAME = gre/SEQ_NAME = ${seqname}/g" "$config_filename"
+        append="\n\n[TISSUE_PARAMETERS]\nT1[0] = 2200\nT1[1] = 2500\nT2[0] = 41\nT2[1] = ${T2[$i]}"
+        append="$append\n\n[SIMULATION_PARAMETERS]\nB0 = ${B0_oxy[$i]}"
+        append="$append\nSCALE[0] = ${fov_scale}\n"
+        echo -e "$append" >> "$config_filename"
 
-    append="\n\n[SIMULATION_PARAMETERS]\nB0 = ${B0_oxy[$i]}"
-    append="$append\nFOV_SCALE[0] = ${fov_scale}\n"
-    echo -e "$append" >> "$config_filename"
-
-done
+    done
 done
 
 
