@@ -1,0 +1,37 @@
+\section{Theory}
+% \quickwordcount{03.2_theory}
+
+\subsection*{Phase Evolution during Random Walk}
+Monte Carlo simulation in the context of BOLD fMRI can be explained as phase accumulation of spins (acting as random walkers) diffusing within a medium with a non-uniform magnetic field. The accumulated phase for the $s^{th}$ spin in each diffusion time step, $dt$, can be stated as:
+%TC:ignore 
+\begin{equation}
+\Delta\Phi_{s}(t) = \gamma\Delta B_{z}(\Vec{r},t) dt
+\end{equation}
+%TC:endignore 
+where $\gamma$ is the gyromagnetic ratio and $\Delta B_{z}$ represents  the local field deviation. The MR signal is then formed from the vector sum of spins that are out-of-phase because of experiencing different precessions. The amplitude of signal at the echo time, $S_{TE}$, after an exemplary 90\textdegree \ RF excitation can be expressed as:
+
+%TC:ignore 
+\begin{equation}
+S_{TE} = \sum_{s=1}^{Ns}e^{i\Phi_{s}} e^{-TE/T_{2, s}}
+\end{equation} where 
+\begin{equation}
+\Phi_{s} = \sum_{t=1}^{Nt}\Delta\Phi_{s}(t)
+\end{equation}
+%TC:endignore 
+
+and $Ns$ is number of spins, $Nt$ is number of time steps, equal to $TE/dt$, and $T_{2, s}$ indicates the transverse relaxation for $s^{th}$ spin. Any gradients or refocusing RF pulses occurring between excitation and echo-time should be incorporated into $\Phi_{s}$. Transverse relaxation, \( T_{2} \), arising from intrinsic spin-spin interactions, is combined with dephasing caused by local field inhomogeneities and diffusion, leading to \( T_{2}^* \) relaxation, and is already inherent in \( S_{TE} \). The local magnetic field perturbation plays a vital role in BOLD fMRI Monte Carlo simulations and is the origin of the contrast, whereas it can typically be ignored in simulations of diffusion MRI since the signal contribution due to the BOLD effect is comparatively small. The local field inhomogeneity originates from susceptiblity differences between the tissue and paramagnetic deoxyhemoglobin in the blood vessels or other structures. Reduced oxygenation level increases this susceptibility difference, leading to a stronger signal attenuation.
+
+The expected mean displacement for each time step \( dt \) is determined by Einstein’s equation: \( \langle r \rangle = \sqrt{2N_{d}Ddt} \), where \( N_{d} \) represents the spatial dimension and \( D \) is the diffusion coefficient. This displacement can be understood as the standard deviation of a Gaussian distribution with a mean of zero. In practical terms, diffusion can be simulated by combining three 1D random walks along orthogonal axes in a Cartesian coordinate system (\( r = \sqrt{2Ddt} \)) or by a single 3D random walk in spherical coordinates (\( r = \sqrt{6Ddt} \)) and randomly choosing azimuthal and polar angles. Practically, the position of the $s^{th}$ particle at time $t_{n+1} = t_n + dt$ is updated as 
+\begin{equation}
+r_{i, n+1} = r_{i, n} + dr_i
+\end{equation}
+with $i = x, y, z$ and $dr$ drawn from a Gaussian distribution with mean zero and standard deviation $\sqrt{2Ddt}$.
+
+\subsection*{Model of Vasculature and Physiology}
+The focus of SpinWalk lays on efficient calculations of a random walk and the simulation of MR sequences. The underlying field inhomogeneities may in simple cases such as for instance in the case of parallel cylinders be determined with SpinWalk, otherwise the field inhomogeneities are assumed to be provided from external sources as a HDF5 file (see the detailed implementation of the simulator below).
+
+Typically, simulations are repeated multiple times with different local magnetic field inhomogeneities mimicing physiological response. Repeating the simulation twice is probably most common, e.g. assuming instantaneous changes in blood oxygenation and volume in all vessels between rest and active states of fMRI examinations. However, for a more detailed tracking of signal evolution, the Monte Carlo simulation can be repeated throughout the entire course of the haemodynamic response function (HRF). To do so, a biophysical model is desired (e.g. \cite{karch1999three, linninger2019mathematical, baez2023mechanistic, hartung2022simulated}) which allows the prediction of blood flow, volume, and oxygenation with finer temporal resolution and accordingly predict the evolution of field inhomogeneities.
+
+Many previous studies have used inﬁnite cylindrical (\cite{khajehim2017investigating, baez2017impact}) or spherical (\cite{scheffler2019bold, weisskoff1994microscopic, bieri2007effect}) perturbation models to represent vessels and blood cells. These models are not only flexible enough to reflect the effects of parameters such as blood volume, size, and orientation to the main magnetic field, but they also provide an analytical solution for the field perturbation. For more realistic models, yielding more complex geometries for which no analytical solution can be provided, the off-resonance map can be calculated by convolution of a dipole kernel with a spatial mask of susceptibilities as demonstrated by \cite{pathak2008novel} and \cite{gagnon2015quantifying}.
+
+

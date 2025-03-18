@@ -1,0 +1,42 @@
+\usepackage{lscape}
+\usepackage{multirow} 
+\usepackage{array}
+\usepackage[pagewise]{lineno}
+% \usepackage[a4paper, margin=1in, twoside=false]{geometry}
+\usepackage{marginnote}
+\usepackage{caption}
+\usepackage{color}
+\usepackage{xcolor}
+\colorlet{RED}{red}
+
+\captionsetup[table]{skip=0pt,singlelinecheck=off} % Align table caption to the left
+
+\addbibresource{05_bib.bib}
+\DeclareUnicodeCharacter{0301}{\'{e}}
+
+\definecolor{darkgreen}{RGB}{0,104,0}
+
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+
+\newcommand{\quickwordcount}[1]{%
+   \immediate\write18{texcount -1 -sum -merge #1.tex > #1-words.sum }%
+   \input{#1-words.sum} words%
+}
+
+
+% annotated version
+% \let\oldmarginnote\marginnote
+% \renewcommand*{\marginnote}[1]{%
+%    \begingroup%
+%    \textcolor{red}{\oldmarginnote{#1}}%
+%    \endgroup%
+% }
+\renewcommand{\marginnote}[1]{\ignorespaces} % clean version
+
+% \newcommand*{\rev}[1]{\textcolor{red}{#1}} % annotated version
+\newcommand*{\rev}[1]{#1}                  % clean version
+
